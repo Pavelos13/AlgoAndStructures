@@ -1,0 +1,44 @@
+class DeQueue:
+    def __init__(self, n):
+        self.size = n
+        self.arr = [None] * n
+        self.head = 0
+        self.tail = 0
+
+    def push_back(self, x):
+        if self.head == self.tail + 1:
+            print("Overflow")
+            exit(1)
+        else:
+            self.arr[self.tail] = x
+            self.tail += 1
+
+    def pop_back(self):
+        if self.head == self.tail:
+            print("Underflow")
+        else:
+            self.tail -= 1
+            x = self.arr[self.tail]
+            self.arr[self.tail] = None
+            return x
+
+    def push_front(self, x):
+        if self.head == self.tail + 1:
+            print("Overflow")
+            exit(1)
+        else:
+            self.head -= 1
+            self.arr[self.head] = x
+
+    def pop_front(self):
+        if self.head == self.tail:
+            print("Underflow")
+            exit(1)
+        else:
+            x = self.arr[self.head]
+            self.arr[self.head] = None
+            self.head += 1
+            return x
+
+    def pprint(self):
+        print(self.arr)

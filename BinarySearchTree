@@ -1,0 +1,178 @@
+class Node:
+    def __init__(self, value):
+        self.r_child = None
+        self.l_child = None
+        self.parent = None
+        self.data = value
+
+
+class Tree:
+    def __init__(self):
+        self.root = None
+
+    def insert(self, value):
+        if self.root:
+            self._insert(value, self.root)
+        else:
+            self.root = Node(value)
+
+    def _insert(self, value, cur_node):
+        if value < cur_node.data:
+            if cur_node.l_child:
+                self._insert(value, cur_node.l_child)
+            else:
+                cur_node.l_child = Node(value)
+                cur_node.l_child.parent = cur_node
+        elif value > cur_node.data:
+            if cur_node.r_child:
+                self._insert(value, cur_node.r_child)
+            else:
+                cur_node.r_child = Node(value)
+                cur_node.r_child.parent = cur_node
+        else:
+            print('This value in tree!')
+
+    def tree_search(self, value):
+        if self.root:
+            return self._tree_search(self.root, value)
+        else:
+            return None
+
+    def _tree_search(self, curr_node, value):
+        if curr_node.data < value and curr_node.r_child != None:
+            return self._tree_search(curr_node.r_child, value)
+        elif curr_node.data > value and curr_node.l_child != None:
+            return self._tree_search(curr_node.l_child, value)
+        elif curr_node.data == value:
+            return curr_node
+
+    def delete_value(self, value):
+        return self.delete_node(self.tree_search(value))
+
+    def delete_node(self, node):
+        def num_children(n):
+            num_children = 0
+            if n.l_child != None: num_children += 1
+            if n.r_child != None: num_children += 1
+            return num_children
+
+        node_parent = node.parent
+        node_children = num_children(node)
+
+        #CASE 1 (node has not children)
+        if node_children == 0:
+            if node_parent.l_child == node:
+                node_parent.l_child = None
+            else:
+                node_parent.r_child = None
+
+        #CASE 2 (node has a single child)
+        if node_children == 1:
+            if node.l_child != None:
+                child = node.l_child
+            else:
+                child = node.r_child
+
+            if node_parent.l_child == node:
+                node_parent.l_child = child
+            else:
+                node_parent.r_child = child
+
+            child.parent = node_parent
+
+        #CASE 3 (node has two children)
+        if node_children == 2:
+            successor = self._min_elem(node.r_child)
+            node.data = successor.data
+            self.delete_node(successor)
+
+    def iterativ_tree_search(self, value):
+        result = None
+        if self.root:
+            result = self._iterativ_tree_search(self.root, value)
+        if result:
+            print(result)
+        else:
+            print("Your element not found(")
+
+    def _iterativ_tree_search(self, curr_node, value):
+        try:
+            while curr_node != None and value != curr_node.data:
+                if value < curr_node.data:
+                    curr_node = curr_node.l_child
+                else:
+                    curr_node = curr_node.r_child
+            return curr_node
+        except AttributeError:
+            return None
+
+    def min_elem(self):
+        min_e = None
+        if self.root:
+            min_e = self._min_elem(self.root)
+        print(min_e)
+
+    def _min_elem(self, curr_node):
+        while curr_node.l_child:
+            curr_node = curr_node.l_child
+        return curr_node
+
+    def max_elem(self):
+        max_e = None
+        if self.root:
+            max_e = self._max_elem(self.root)
+        print(max_e)
+
+    def _max_elem(self, curr_node):
+        while curr_node.r_child:
+            curr_node = curr_node.r_child
+        return curr_node.data
+
+    def tree_successor(self, value):
+        if self.root:
+            return self._tree_successor(self.root, value)
+
+    def _tree_successor(self, curr_node, value):
+        curr_node = self._iterativ_tree_search(curr_node, value)
+        if curr_node.r_child:
+            return self._min_elem(curr_node.r_child)
+        y = curr_node.parent
+        while y and curr_node == y.r_child:
+            curr_node = y
+            y = y.parent
+        return y.data
+
+    def tree_predecessor(self, value):
+        if self.root:
+            return self._tree_predecessor(self.root, value)
+
+    def _tree_predecessor(self, curr_node, value):
+        curr_node = self._iterativ_tree_search(curr_node, value)
+        if curr_node.l_child:
+            return self._max_elem(curr_node.l_child)
+        y = curr_node.parent
+        while y and curr_node == y.l_child:
+            curr_node = y
+            y = y.parent
+        return y.data
+
+    def print_tree(self):
+        if self.root:
+            self._print_tree(self.root)
+
+    def _print_tree(self, cur_node):
+        if cur_node:
+            self._print_tree(cur_node.l_child)
+            print(cur_node.data)
+            self._print_tree(cur_node.r_child)
+
+
+test = Tree()
+test.insert(5)
+test.insert(3)
+test.insert(9)
+test.insert(7)
+test.insert(10)
+test.insert(8)
+test.delete_value(5)
+test.print_tree()
